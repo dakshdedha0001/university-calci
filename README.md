@@ -46,7 +46,8 @@ Register at `/register`, then use the app at `/app/dashboard`.
 
 ### Vercel (UI)
 - Env: `VITE_API_URL=https://your-api.up.railway.app`
-- Build: `npm run build` (see `vercel.json`)
+- Build: `npm run build` (Nitro `vercel` preset → `.vercel/output`, see `vercel.json`)
+- In the Vercel dashboard, set **Output Directory** to `.vercel/output` (or rely on `vercel.json`)
 
 ### Supabase
 - Run migration SQL once; use **Session pooler** connection string for `DATABASE_URL`
