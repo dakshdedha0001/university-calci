@@ -1,9 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { QueryState } from "@/components/QueryState";
 import { fetchProfile, updateProfile } from "@/lib/api/profile";
-import { clearTokens } from "@/lib/auth-storage";
 import { queryKeys } from "@/lib/query-keys";
 
 export const Route = createFileRoute("/app/settings")({
@@ -11,7 +10,6 @@ export const Route = createFileRoute("/app/settings")({
 });
 
 function SettingsPage() {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const profileQ = useQuery({ queryKey: queryKeys.profile, queryFn: fetchProfile });
   const [name, setName] = useState("");
@@ -33,12 +31,6 @@ function SettingsPage() {
       setTimeout(() => setSaved(false), 1500);
     },
   });
-
-  const logout = () => {
-    clearTokens();
-    queryClient.clear();
-    navigate({ to: "/login" });
-  };
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -89,18 +81,6 @@ function SettingsPage() {
           </div>
         </div>
       </QueryState>
-
-      <div className="rounded-xl border border-border bg-surface p-6 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
-        <h3 className="mb-1 text-base font-semibold text-foreground">Account</h3>
-        <p className="mb-4 text-sm text-muted-foreground">Sign out of this device.</p>
-        <button
-          type="button"
-          onClick={logout}
-          className="rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
-        >
-          Sign out
-        </button>
-      </div>
     </div>
   );
 }

@@ -1,20 +1,4 @@
 import { getApiUrl } from "@/lib/config";
-import { clearTokens, getAccessToken, getRefreshToken, setTokens } from "@/lib/auth-storage";
-import type { TokenResponse } from "@/lib/api/types";
-
-async function refreshAccessToken(): Promise<boolean> {
-  const rt = getRefreshToken();
-  if (!rt) return false;
-  const res = await fetch(`${getApiUrl()}/api/v1/auth/refresh`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh_token: rt }),
-  });
-  if (!res.ok) return false;
-  const tokens = (await res.json()) as TokenResponse;
-  setTokens(tokens.access_token, tokens.refresh_token);
-  return true;
-}
 
 export class ApiError extends Error {
   status: number;
@@ -26,32 +10,13 @@ export class ApiError extends Error {
   }
 }
 
-type ApiFetchOptions = RequestInit & { auth?: boolean };
-
-export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
-  const { auth = true, headers: initHeaders, ...rest } = options;
-  const headers = new Headers(initHeaders);
-  if (!headers.has("Content-Type") && rest.body) {
+export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const headers = new Headers(options.headers);
+  if (!headers.has("Content-Type") && options.body) {
     headers.set("Content-Type", "application/json");
   }
-  if (auth) {
-    const token = getAccessToken();
-    if (token) headers.set("Authorization", `Bearer ${token}`);
-  }
 
-  let res = await fetch(`${getApiUrl()}${path}`, { ...rest, headers });
-
-  if (res.status === 401 && auth && getRefreshToken()) {
-    const refreshed = await refreshAccessToken();
-    if (refreshed) {
-      headers.set("Authorization", `Bearer ${getAccessToken()}`);
-      res = await fetch(`${getApiUrl()}${path}`, { ...rest, headers });
-    } else {
-      clearTokens();
-    }
-  } else if (res.status === 401 && auth) {
-    clearTokens();
-  }
+  const res = await fetch(`${getApiUrl()}${path}`, { ...options, headers });
 
   if (!res.ok) {
     let message = res.statusText;

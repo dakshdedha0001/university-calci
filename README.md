@@ -36,7 +36,7 @@ bun install
 bun run dev
 ```
 
-Register at `/register`, then use the app at `/app/dashboard`.
+Open the app at `/app/dashboard` (no login required).
 
 ## Deployment
 

@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { AuthLayout } from "./login";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/register")({
-  head: () => ({ meta: [{ title: "Create account — University Calci" }] }),
-  component: () => <AuthLayout mode="register" />,
+  beforeLoad: () => {
+    throw redirect({ to: "/app/dashboard" });
+  },
 });

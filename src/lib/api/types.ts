@@ -1,16 +1,3 @@
-export type TokenResponse = {
-  access_token: string;
-  refresh_token: string;
-  token_type: string;
-};
-
-export type UserResponse = {
-  id: string;
-  email: string;
-  full_name: string;
-  created_at: string;
-};
-
 export type ProfileResponse = {
   full_name: string;
   roll_number: string | null;

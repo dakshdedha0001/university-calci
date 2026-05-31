@@ -87,10 +87,10 @@ function Landing() {
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
             <Link
-              to="/register"
+              to="/app/dashboard"
               className="rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
             >
-              Start for Free
+              Open app
             </Link>
             <a
               href="#how"
@@ -158,10 +158,10 @@ function Landing() {
             Join thousands of students already tracking smarter.
           </p>
           <Link
-            to="/register"
+            to="/app/dashboard"
             className="mt-8 inline-block rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90"
           >
-            Create Free Account
+            Open app
           </Link>
         </div>
       </section>

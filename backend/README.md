@@ -6,12 +6,12 @@
 backend/
   app/
     main.py              # FastAPI entry
-    core/                # config, JWT, dependencies
+    core/                # config, dependencies
     db/                  # SQLAlchemy session
     models/              # PostgreSQL models
     schemas/             # Pydantic request/response
     domain/              # Wrappers around root *.py logic
-    services/            # Auth & persistence
+    services/            # Persistence helpers
     api/v1/              # Route handlers
   requirements.txt
   .env.example
@@ -48,16 +48,16 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 ## API (v1)
 
-| Method | Path | Auth |
-|--------|------|------|
-| POST | `/api/v1/auth/register` | No |
-| POST | `/api/v1/auth/login` | No |
-| GET | `/api/v1/auth/me` | Bearer |
-| POST | `/api/v1/attendance/calculate` | No |
-| GET/POST | `/api/v1/attendance/subjects` | Bearer |
-| POST | `/api/v1/academic/sgpa/calculate` | No |
-| GET | `/api/v1/academic/cgpa` | Bearer |
-| POST | `/api/v1/academic/semesters` | Bearer |
-| GET | `/api/v1/academic/improvements` | Bearer |
-| POST | `/api/v1/academic/target-cgpa` | Bearer |
-| POST | `/api/v1/academic/predict` | Bearer |
+| Method | Path |
+|--------|------|
+| POST | `/api/v1/attendance/calculate` |
+| GET/POST | `/api/v1/attendance/subjects` |
+| POST | `/api/v1/academic/sgpa/calculate` |
+| GET | `/api/v1/academic/cgpa` |
+| POST | `/api/v1/academic/semesters` |
+| GET | `/api/v1/academic/improvements` |
+| POST | `/api/v1/academic/target-cgpa` |
+| POST | `/api/v1/academic/predict` |
+| GET/PATCH | `/api/v1/profile` |
+
+All routes use a single shared guest profile (no login).

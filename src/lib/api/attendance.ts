@@ -10,7 +10,6 @@ export function calculateAttendance(body: {
   return apiFetch<AttendanceCalculateResponse>("/api/v1/attendance/calculate", {
     method: "POST",
     body: JSON.stringify(body),
-    auth: false,
   });
 }
 

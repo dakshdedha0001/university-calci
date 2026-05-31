@@ -1,40 +1,34 @@
-import uuid
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi import Depends
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.security import verify_access_token
+from app.core.security import hash_password
 from app.db.session import get_db
-from app.models import User
-
-bearer_scheme = HTTPBearer(auto_error=False)
+from app.models import StudentProfile, User
 
 DbSession = Annotated[Session, Depends(get_db)]
-Credentials = Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)]
+
+DEFAULT_USER_EMAIL = "guest@university-calci.local"
 
 
-def get_current_user(db: DbSession, credentials: Credentials) -> User:
-    if credentials is None or credentials.scheme.lower() != "bearer":
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    try:
-        user_id = verify_access_token(credentials.credentials)
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(exc),
-            headers={"WWW-Authenticate": "Bearer"},
-        ) from exc
+def get_default_user(db: DbSession) -> User:
+    user = db.scalar(select(User).where(User.email == DEFAULT_USER_EMAIL))
+    if user is not None:
+        return user
 
-    user = db.get(User, uuid.UUID(user_id))
-    if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+    user = User(
+        email=DEFAULT_USER_EMAIL,
+        hashed_password=hash_password("unused"),
+        full_name="Student",
+    )
+    db.add(user)
+    db.flush()
+    db.add(StudentProfile(user_id=user.id))
+    db.commit()
+    db.refresh(user)
     return user
 
 
-CurrentUser = Annotated[User, Depends(get_current_user)]
+CurrentUser = Annotated[User, Depends(get_default_user)]

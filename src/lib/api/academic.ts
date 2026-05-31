@@ -65,6 +65,5 @@ export function calculateSgpa(subjects: { name: string; code: string; credits: n
   return apiFetch<{ sgpa: number }>("/api/v1/academic/sgpa/calculate", {
     method: "POST",
     body: JSON.stringify({ subjects }),
-    auth: false,
   });
 }
